@@ -1,0 +1,64 @@
+strip: neopixel.Strip = None
+index = 0
+time = 0
+x = 0
+z = 0
+y = 0
+
+def on_button_pressed_a():
+    global strip, index, time, x, z, y
+    strip = neopixel.create(DigitalPin.P1, 10, NeoPixelMode.RGB)
+    strip.set_brightness(10)
+    index = 10
+    for index2 in range(index):
+        time = 3
+        music.start_melody(music.built_in_melody(Melodies.POWER_UP), MelodyOptions.ONCE)
+        strip.show_color(neopixel.colors(NeoPixelColors.BLACK))
+        while time >= 0:
+            strip.set_brightness(10)
+            x = input.acceleration(Dimension.X) / 4
+            z = input.acceleration(Dimension.Z) / 4
+            strip.shift(3)
+            strip.set_pixel_color(0, neopixel.colors(NeoPixelColors.RED) - (x - z))
+            strip.show()
+            time += -1
+            basic.pause(10000)
+        if index <= randint(6, 12):
+            strip = neopixel.create(DigitalPin.P1, 10, NeoPixelMode.RGB_RGB)
+            strip.set_brightness(10)
+            music.start_melody(music.built_in_melody(Melodies.PRELUDE), MelodyOptions.ONCE)
+            time = 50
+            while time >= 0:
+                x = input.acceleration(Dimension.X) * 4
+                y = input.acceleration(Dimension.Y) * 4
+                z = input.acceleration(Dimension.Z) * 4
+                strip.shift(1)
+                strip.set_pixel_color(0, neopixel.rgb(x, y, z))
+                strip.show()
+                time += -1
+                basic.pause(100)
+        else:
+            time = 3
+            music.start_melody(music.built_in_melody(Melodies.POWER_DOWN),
+                MelodyOptions.ONCE)
+            strip.show_color(neopixel.colors(NeoPixelColors.BLACK))
+            while time >= 0:
+                x = input.acceleration(Dimension.X) / 2
+                y = input.acceleration(Dimension.Y) / 2
+                z = input.acceleration(Dimension.Z) / 2
+                strip.shift(3)
+                strip.set_pixel_color(0, neopixel.colors(NeoPixelColors.BLUE) - (x - (y - z)))
+                strip.show()
+                time += -1
+                basic.pause(5000)
+    strip = neopixel.create(DigitalPin.P1, 30, NeoPixelMode.RGB)
+    strip.show_color(neopixel.colors(NeoPixelColors.BLACK))
+    control.reset()
+input.on_button_pressed(Button.A, on_button_pressed_a)
+
+def on_button_pressed_b():
+    global strip
+    strip = neopixel.create(DigitalPin.P1, 30, NeoPixelMode.RGB)
+    strip.show_color(neopixel.colors(NeoPixelColors.BLACK))
+    control.reset()
+input.on_button_pressed(Button.B, on_button_pressed_b)
